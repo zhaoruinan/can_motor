@@ -26,7 +26,10 @@ def motor_read_pos(node):
     bus.send(msg)
     recv = bus.recv()
     print(recv)
-    return(recv.data[3]*256+recv.data[2])
+    try:
+        return(recv.data[3]*256+recv.data[2])
+    except:
+        print("please make sure CAN cable is working")
 class MyApp(wx.App):
     def OnInit(self):
         frame = wx.Frame(parent = None,title = 'wxPython',size = (280,360))
