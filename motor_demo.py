@@ -68,13 +68,13 @@ class MyApp(wx.App):
         frame.Show()
         return True
     def OnButton1(self, event):
-        motor_set_speed(1,0)
+        motor_set_speed(5,0)
         
     def OnButton2(self, event):
-        motor_set_speed(1,self.speed1)
+        motor_set_speed(5,self.speed1)
     
     def OnButton3(self, event):
-        motor_set_speed_m(1,self.speed1)
+        motor_set_speed_m(5,self.speed1)
 
     def OnButton1_1(self, event):
         motor_set_speed(3,0)
@@ -86,7 +86,7 @@ class MyApp(wx.App):
         motor_set_speed_m(3,self.speed3)
 
     def OnUpdate(self, event):
-        pos1 = motor_read_pos(1)
+        pos1 = motor_read_pos(5)
         pos2 = motor_read_pos(3)
         #print(pos1,pos2)
         self.text3.SetValue(str(pos1))
