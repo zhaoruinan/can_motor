@@ -69,6 +69,9 @@ class MyApp(wx.App):
         return True
     def OnButton1(self, event):
         motor_set_speed(5,0)
+        pos = motor_read_pos(5)
+        #print(pos)
+        self.text3.SetValue(str(pos))
         
     def OnButton2(self, event):
         motor_set_speed(5,self.speed1)
@@ -78,6 +81,9 @@ class MyApp(wx.App):
 
     def OnButton1_1(self, event):
         motor_set_speed(3,0)
+        pos = motor_read_pos(3)
+        #print(pos)
+        self.text4.SetValue(str(pos))
         
     def OnButton2_1(self, event):
         motor_set_speed(3,self.speed3)
