@@ -3,6 +3,7 @@ import socket
 from socket import error as SocketError
 import errno
 import threading
+from threading import Lock
 from datetime import datetime
 import time
 from ctypes import *
@@ -11,37 +12,64 @@ PORT = 9911        # The port used by the server
 SIZE_DATA_ASCII_MAX = 32
 SIZE_DATA_TCP_MAX  = 200
 class Data(Union):
-    _fields_ = [("byte", c_ubyte * SIZE_DATA_TCP_MAX),("double6dArr", c_double * 6)]
-#print('Received', repr(data))
+    _fields_ = [("byte", c_ubyte * SIZE_DATA_TCP_MAX),("double6dArr", c_double * 6),("boolArr", c_bool * 8)]
+global send_data,res_data,send_data_dou,send_data_b
+send_data = Data()
+res_data = Data()
+send_data_dou = [0.1,0.1,0.1,0.1,0.1,0.1]
+send_data_b = [True,True,True,True,True,True]
+lock = Lock()
 def socket_tcp():
+    global send_data,res_data,send_data_dou,send_data_b
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    
-    send_data = Data()
     s.connect((HOST, PORT))
     while True:
-        send_data.double6dArr[5] = 0.001 +send_data.double6dArr[5] 
-        tcp_client(s,send_data)
-       
-
-def tcp_client(s,send_data):
-    write_buffer = (c_char* 1024)()
-    #read_buffer = (c_char* 1024)()
-    res_data = Data()  
-    #print('send data  ',send_data.double6dArr[5])  
-#    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-
-
+        #lock.acquire()
+        send_data.double6dArr[5] = 0.001 +send_data.double6dArr[5]
+        send_data.double6dArr[0]= send_data_dou[0]
+        send_data.boolArr[0]= send_data_b[0]
+        send_data.double6dArr[1]= send_data_dou[1]
+        send_data.boolArr[1]= send_data_b[1]
+        tcp_client(s)
+def tcp_client(s):
+    global send_data,res_data,send_data_dou,send_data_b
+    lock.acquire()
+    write_buffer = (c_char* 1024)()  
     memmove( write_buffer, send_data.byte,1024)
+    lock.release()
     s.sendall(write_buffer)
     time.sleep(0.2)
     read_buffer = s.recv(1024)
+    lock.acquire()
     memmove( res_data.byte,read_buffer, 1024)
     print('receive data  ',res_data.double6dArr[5])
     print("client",datetime.fromtimestamp(time.time()))
     print('send data  ',send_data.double6dArr[5])
+    print('speed 1 ',send_data.double6dArr[0])
+    print('speed 2 ',send_data.double6dArr[1])
+    lock.release()
 
-        #print('Received', repr(data))
-    return res_data
+def motor_set_speed(node,speed,m=1):
+    
+    if node == 5:
+        global send_data,res_data,send_data_dou,send_data_b
+        lock.acquire()
+        send_data_b[0] = True
+        send_data_dou[0] = speed * m
+        lock.release()
+    if node == 3:
+        lock.acquire()
+        send_data_b[1] = True
+        send_data_dou[1] = speed * m
+        lock.release()
+def motor_read_pos(node):
+    global send_data,res_data
+    if node ==5:
+        return res_data.double6dArr[0]       
+    if node ==3:
+        return res_data.double6dArr[1]
+    return 55555
+  
 class MyApp(wx.App):
     def OnInit(self):
         frame = wx.Frame(parent = None,title = 'wxPython',size = (280,360))
@@ -89,7 +117,7 @@ class MyApp(wx.App):
         motor_set_speed(5,self.speed1)
     
     def OnButton3(self, event):
-        motor_set_speed_m(5,self.speed1)
+        motor_set_speed(5,self.speed1,-1)
 
     def OnButton1_1(self, event):
         motor_set_speed(3,0)
@@ -101,7 +129,7 @@ class MyApp(wx.App):
         motor_set_speed(3,self.speed3)
     
     def OnButton3_1(self, event):
-        motor_set_speed_m(3,self.speed3)
+        motor_set_speed(3,self.speed3,-1)
 
     def OnUpdate(self, event):
         pos1 = motor_read_pos(5)

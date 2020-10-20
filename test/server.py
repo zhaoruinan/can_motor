@@ -8,7 +8,7 @@ PORT = 9911        # Port to listen on (non-privileged ports are > 1023)
 SIZE_DATA_ASCII_MAX = 32
 SIZE_DATA_TCP_MAX  = 200
 class Data(Union):
-    _fields_ = [("byte", c_ubyte * SIZE_DATA_TCP_MAX),("double6dArr", c_double * 6)]
+    _fields_ = [("byte", c_ubyte * SIZE_DATA_TCP_MAX),("double6dArr", c_double * 6),("bool", c_bool * 8)]
 
 #from motor_can import motor_set_speed,motor_set_speed_m,motor_read_pos
 def data_process(data):
@@ -32,6 +32,9 @@ def server():
                 print('send data  ',send_data.double6dArr[5])
                 memmove(res_data.byte, read_buffer, 1024)
                 print('receive data  ',res_data.double6dArr[5])
+                
+                print('speed1  ',res_data.double6dArr[0])
+                print('speed2 ',res_data.double6dArr[1])
                 
                 print("server",datetime.fromtimestamp(time.time()))
                 
