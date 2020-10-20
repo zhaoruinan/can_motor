@@ -7,7 +7,7 @@ from datetime import datetime
 import time
 from ctypes import *
 HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 65432        # The port used by the server
+PORT = 9911        # The port used by the server
 SIZE_DATA_ASCII_MAX = 32
 SIZE_DATA_TCP_MAX  = 200
 class Data(Union):
@@ -33,8 +33,9 @@ def tcp_client(s,send_data):
 
     memmove( write_buffer, send_data.byte,1024)
     s.sendall(write_buffer)
+    time.sleep(0.2)
     read_buffer = s.recv(1024)
-    memmove( read_buffer,res_data.byte, 1024)
+    memmove( res_data.byte,read_buffer, 1024)
     print('receive data  ',res_data.double6dArr[5])
     print("client",datetime.fromtimestamp(time.time()))
     print('send data  ',send_data.double6dArr[5])
