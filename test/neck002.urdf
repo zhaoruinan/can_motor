@@ -1,0 +1,44 @@
+<?xml version="1.0" ?>
+<robot name="twoarm_neck">
+  <joint name="joint1" type="fixed">
+    <parent link="base_link"/>
+    <child link="link1"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.0 0.0 0.059"/>
+    <axis xyz="0 0 1"/>
+  </joint>
+  <joint name="joint2" type="continuous">
+    <parent link="link1"/>
+    <child link="link2"/>
+    <origin rpy="0.0 1.570796 0.0" xyz="0.0 0.0 0.0459"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <joint name="joint3" type="continuous">
+    <parent link="link2"/>
+    <child link="camera_link"/>
+    <origin rpy="0.0 0.0 0.0" xyz="0.07175 0.04635 0.02990"/>
+    <axis xyz="0 1 0"/>
+  </joint>
+  <link name="base_link">
+    <inertial>
+      <mass value="4.0"/>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+    </inertial>
+  </link>  
+  <link name="link1">
+    <inertial>
+      <mass value="4.0"/>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+    </inertial>
+  </link>  
+  <link name="link2">
+    <inertial>
+      <mass value="4.0"/>
+      <origin rpy="0 0 0" xyz="0.0 0.0 0.0"/>
+      <inertia ixx="0.0" ixy="0.0" ixz="0.0" iyy="0.0" iyz="0.0" izz="0.0"/>
+    </inertial>
+  </link>
+  <link name="camera_link">
+  </link>
+</robot>
