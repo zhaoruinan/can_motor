@@ -10,17 +10,6 @@ SIZE_DATA_TCP_MAX  = 200
 class Data(Union):
     _fields_ = [("byte", c_ubyte * SIZE_DATA_TCP_MAX),("double6dArr", c_double * 6),("bool", c_bool * 8)]
 #from motor_can import motor_set_speed,motor_set_speed_m,motor_read_pos
-from neck_sim import neck_sim
-global sim_v1,sim_v2 
-sim_v1,sim_v2= 0.0,0.0
-def neck_bullt_sim():
-    sim = neck_sim()
-    while True:
-        global sim_v1,sim_v2
-        sim.motor_set_speed(3,sim_v1)
-        sim.motor_set_speed(5,sim_v2)
-        sim.step()
-    sim.stop()
 def server():
     write_buffer = (c_char* 1024)()
     read_buffer = (c_char* 1024)()
@@ -34,6 +23,8 @@ def server():
             send_data = Data()
             while True:
                 read_buffer = conn.recv(1024)
+                #if not read_buffer:
+                #    break
                 print('send data  ',send_data.double6dArr[5])
                 memmove(res_data.byte, read_buffer, 1024)
                 print('receive data  ',res_data.double6dArr[5])
@@ -51,8 +42,6 @@ def server():
                 conn.sendall(write_buffer)
                 time.sleep(0.2)           
 def main():
-    t_sim = threading.Thread(target=neck_bullt_sim)
-    t_sim.start()
     server()
 #if __name__ =='__main__':
 main()

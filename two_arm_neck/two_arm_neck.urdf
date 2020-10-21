@@ -1,18 +1,13 @@
-<?xml version="1.0" ?>
-
 <robot name="twoarm_neck">
-
-
 <link name="world">
-  </link>
+</link>
 
-
-
-  <joint name="world_fixed" type="fixed">
-    <origin rpy="0 0 0" xyz="0 0 0"/>
-    <parent link="world"/>
+<joint name="world_fixed" type="fixed">
+<origin rpy="0 0 0" xyz="0 0 0"/>
+<parent link="world"/>
     <child link="link0"/>
-  </joint>
+</joint>
+
 <link name="link0">
  <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
@@ -32,16 +27,16 @@
         <mesh filename="two_arm_neck/neck1.stl"/>
       </geometry>
     </collision>
-  </link>
+</link>
 
-  <joint name="joint1" type="continuous">
+<joint name="joint1" type="continuous">
     <parent link="link0"/>
     <child link="link1"/>
     <origin xyz = "0 0 0.06290" rpy = "0 0 0"/>
     <axis xyz = "0 0 1"/>
        <!--<limit effort="300" lower="-3.054325556" upper="3.054325556" velocity="10"/>
     <dynamics damping="0.5"/>-->
-  </joint>
+</joint>
 
 <link name="link1">
  <inertial>
@@ -62,16 +57,16 @@
         <mesh filename="two_arm_neck/neck2.stl"/>
       </geometry>
     </collision>
-  </link>
+</link>
 
-  <joint name="joint2" type="continuous">
+<joint name="joint2" type="continuous">
     <parent link="link1"/>
     <child link="link2"/>
     <origin xyz = "0 0 0.035" rpy = "0 0 0"/>
     <axis xyz = "0 -1 0"/>
        <!--<limit effort="300" lower="-3.054325556" upper="3.054325556" velocity="10"/>
     <dynamics damping="0.5"/>-->
-  </joint>
+</joint>
 
 
 <link name="link2">
@@ -93,16 +88,16 @@
         <mesh filename="two_arm_neck/neck3.stl"/>
       </geometry>
     </collision>
-  </link>
+</link>
 
-  <joint name="joint3" type="continuous">
+<joint name="joint3" type="continuous">
     <parent link="link2"/>
     <child link="tcp"/>
     <origin xyz = "-0.08867 0.02840 0.04790" rpy = "0 0 0"/>
     <axis xyz = "0 -1 0"/>
        <!--<limit effort="300" lower="-3.054325556" upper="3.054325556" velocity="10"/>
     <dynamics damping="0.5"/>-->
-  </joint>
+</joint>
 
 <link name="tcp">
  <inertial>
@@ -125,7 +120,7 @@
         <box size="0.01 0.01 0.01" />
       </geometry>
     </collision>
-  </link>
+</link>
 
 </robot>
 

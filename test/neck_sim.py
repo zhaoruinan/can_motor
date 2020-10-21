@@ -8,7 +8,7 @@ class neck_sim():
         p.setGravity(0, 0, -9.8)
         p.setTimeStep(1/200)
         self.maxForce = 100  #Newton
-        self.neck = p.loadURDF("/home/frank/Documents/can_motor/two_arm_neck/two_arm_neck.urdf")
+        self.neck = p.loadURDF("/home/frank/Documents/can_motor/two_arm_neck/neck.urdf")
         numJoints = p.getNumJoints(self.neck)
         print(numJoints)
     def motor_set_speed(self,node,speed):

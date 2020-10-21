@@ -6,7 +6,19 @@ import threading
 from threading import Lock
 from datetime import datetime
 import time
+from utils import tf_neck2cam
 from ctypes import *
+from neck_sim import neck_sim
+global sim_v1,sim_v2 
+sim_v1,sim_v2= 0.0,0.0
+def neck_bullt_sim():
+    sim = neck_sim()
+    while True:
+        global sim_v1,sim_v2
+        sim.motor_set_speed(3,sim_v1)
+        sim.motor_set_speed(5,sim_v2)
+        sim.step()
+    sim.stop()
 HOST = '127.0.0.1'  # The server's hostname or IP address
 PORT = 9911        # The port used by the server
 SIZE_DATA_ASCII_MAX = 32
@@ -16,6 +28,9 @@ class Data(Union):
 global send_data,res_data,send_data_dou,send_data_b
 send_data = Data()
 res_data = Data()
+res_data.double6dArr[0] = 0.0
+res_data.double6dArr[1] = 0.0
+
 send_data_dou = [0.1,0.1,0.1,0.1,0.1,0.1]
 send_data_b = [True,True,True,True,True,True]
 lock = Lock()
@@ -38,7 +53,13 @@ def tcp_client(s):
     memmove( write_buffer, send_data.byte,1024)
     lock.release()
     s.sendall(write_buffer)
-    time.sleep(0.2)
+    start = datetime.now()
+    if res_data.double6dArr[0]:
+        print('neck2cam',tf_neck2cam(res_data.double6dArr[0],res_data.double6dArr[1]))
+    end = datetime.now()
+    exec_time = end - start
+    print(exec_time,exec_time.total_seconds())
+    time.sleep(0.2-exec_time.total_seconds())
     read_buffer = s.recv(1024)
     lock.acquire()
     memmove( res_data.byte,read_buffer, 1024)
@@ -47,6 +68,7 @@ def tcp_client(s):
     print('send data  ',send_data.double6dArr[5])
     print('speed 1 ',send_data.double6dArr[0])
     print('speed 2 ',send_data.double6dArr[1])
+    #print('neck2cam',tf_neck2cam(res_data.double6dArr[0],res_data.double6dArr[1]))
     lock.release()
 
 def motor_set_speed(node,speed,m=1):
@@ -154,6 +176,8 @@ class MyApp(wx.App):
 def main():
     t_tcp = threading.Thread(target=socket_tcp)
     t_tcp.start()
+    t_sim = threading.Thread(target=neck_bullt_sim)
+    t_sim.start()
     app = MyApp()
     app.MainLoop()
 #if __name__ =='__main__':
