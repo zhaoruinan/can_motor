@@ -28,9 +28,6 @@ def server():
                 print('send data  ',send_data.double6dArr[5])
                 memmove(res_data.byte, read_buffer, 1024)
                 print('receive data  ',res_data.double6dArr[5])
-                global sim_v1,sim_v2
-                sim_v1 = res_data.double6dArr[0]
-                sim_v2 = res_data.double6dArr[1]
                 print('speed1  ',res_data.double6dArr[0])
                 print('speed2 ',res_data.double6dArr[1])                
                 print("server",datetime.fromtimestamp(time.time()))                                

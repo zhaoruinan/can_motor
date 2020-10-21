@@ -35,7 +35,7 @@ send_data_dou = [0.1,0.1,0.1,0.1,0.1,0.1]
 send_data_b = [True,True,True,True,True,True]
 lock = Lock()
 def socket_tcp():
-    global send_data,res_data,send_data_dou,send_data_b
+    global send_data,res_data,send_data_dou,send_data_b,sim_v1,sim_v2 
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((HOST, PORT))
     while True:
@@ -45,6 +45,8 @@ def socket_tcp():
         send_data.boolArr[0]= send_data_b[0]
         send_data.double6dArr[1]= send_data_dou[1]
         send_data.boolArr[1]= send_data_b[1]
+        sim_v1 = send_data.double6dArr[0]
+        sim_v2 = send_data.double6dArr[1]
         tcp_client(s)
 def tcp_client(s):
     global send_data,res_data,send_data_dou,send_data_b
@@ -54,8 +56,8 @@ def tcp_client(s):
     lock.release()
     s.sendall(write_buffer)
     start = datetime.now()
-    if res_data.double6dArr[0]:
-        print('neck2cam',tf_neck2cam(res_data.double6dArr[0],res_data.double6dArr[1]))
+    #if res_data.double6dArr[0]:
+    #    print('neck2cam',tf_neck2cam(res_data.double6dArr[0],res_data.double6dArr[1]))
     end = datetime.now()
     exec_time = end - start
     print(exec_time,exec_time.total_seconds())
