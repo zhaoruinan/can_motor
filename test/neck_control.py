@@ -2,6 +2,8 @@ import wx
 import can
 import time
 import math
+from datetime import datetime
+import threading
 bus = can.interface.Bus(bustype='kvaser', channel='0', bitrate=1000000)
 def int_to_char(n):
     b = [0x00, 0x00, 0x00, 0x00]
@@ -11,8 +13,35 @@ def int_to_char(n):
     b[3] =b[3]+ (n & 0xff)
     return b
 class motor:
-    def __init__(self,node):
+    def __init__(self,node,angle,min,max):
         self.node = node
+        self.angle_value = angle
+        self.speed = 10
+        self.angle_max = max
+        self.angle_min = min
+    def angle_set(self,angle):
+        self.angle_value = angle
+    def angle_go(self):
+        value = self.pos_r_one()
+        print(self.angle_value,self.angle_max)
+        if self.angle_value > self.angle_max:
+            self.angle_set(self.angle_max)
+        if self.angle_value < self.angle_min:
+            self.angle_set(self.angle_min)
+
+        if self.angle_value > value+50:
+            print(self.angle_value,value,"go +")
+            self.motor_set_speed(self.speed)
+        elif self.angle_value < value-50:
+            print(self.angle_value,value,"go -")
+            self.motor_set_speed(-1*self.speed)
+        else:
+            print(self.angle_value,value,"stop")
+            self.motor_set_speed(0)
+            value = self.pos_r_one()
+            self.angle_set(value)
+
+
     def motor_set_speed(self,speed):
         n = speed*100
         b = int_to_char(n)
@@ -61,11 +90,9 @@ class motor:
 
 class MyApp(wx.App):
     def OnInit(self):
-        self.motor1 = motor(5)
-        self.motor2 = motor(3)
         frame = wx.Frame(parent = None,title = 'wxPython',size = (280,560))
         panel = wx.Panel(frame, -1)
-        self.speed1, speed3, pos1, pos2 = 0,0,0,0
+        self.speed1, self.speed3, self.pos1, self.pos2 = 0,0,0,0
         self.button1 = wx.Button(panel,-1,'Stop1',pos = (30,80))
         self.button2 = wx.Button(panel,-1,'move1',pos = (30,120))
         self.button3 = wx.Button(panel,-1,'move1-',pos = (30,40))
@@ -109,51 +136,39 @@ class MyApp(wx.App):
         frame.Show()
         return True
     def OnButton1(self, event):
-        self.motor1.motor_set_speed(0)
-        pos = self.motor1.pos_r_one()
+        value = motor1.pos_r_one()
+        print("motor1",value)
+        motor1.angle_set(value)
+        motor1.motor_set_speed(0)
+        pos = motor1.pos_r_one()
         #print(pos)
         self.text3.SetValue(str(pos))
         
     def OnButton2(self, event):
-        self.motor1.motor_set_speed(self.speed1)  
+        motor1.motor_set_speed(self.speed1)  
     def OnButton3(self, event):
-        self.motor1.motor_set_speed(-1*self.speed1)
+        motor1.motor_set_speed(-1*self.speed1)
     def OnButton1_1(self, event):
-        self.motor2.motor_set_speed(0)
-        pos = self.motor2.pos_r_one()
+        value = motor2.pos_r_one()
+        motor2.angle_set(value)
+        motor2.motor_set_speed(0)
+        pos = motor2.pos_r_one()
         #print(pos)
         self.text4.SetValue(str(pos))        
     def OnButton2_1(self, event):
-        self.motor2.motor_set_speed(self.speed2) 
+        motor2.motor_set_speed(self.speed2) 
     
     def OnButton3_1(self, event):
-        self.motor2.motor_set_speed(-1*self.speed2) 
+        motor2.motor_set_speed(-1*self.speed2) 
     def OnButton4(self, event):
-        pos_r1 = self.motor1.pos_r_one()
-        pos_r2 = self.motor2.pos_r_one()
-        print(pos_r1,self.pos1)
-        if pos_r1 > self.pos1:
-            orr1 = 1
-        if pos_r1 < self.pos1:
-            orr1 = 0
-        orr1=1
-        print("muti",self.motor1.pos_r_muti())
-        #self.motor1.motor_one_angle_set(self.pos1,orr1)
-        self.motor1.motor_muti_angle_set(self.pos1,orr1)
-        print(pos_r2,self.pos2)
-        if pos_r2 > self.pos2:
-            orr2 = 1
-        if pos_r2 < self.pos2:
-            orr2 = 0
-        orr2 = 0
-        print(orr2)
-        self.motor2.motor_one_angle_set(self.pos2,orr2)
-        #self.motor1.motor_one_angle_set(self.pos2)
-
+        pos_m1 = self.pos1
+        motor1.angle_set(pos_m1)
+        pos_m2 = self.pos2
+        motor2.angle_set(pos_m2)
 
     def OnUpdate(self, event):
-        pos1 = self.motor1.pos_r_one()
-        pos2 = self.motor2.pos_r_one()
+        pos1 = motor1.pos_r_one()
+        pos2 = motor2.pos_r_one()
         ##print(pos1,pos2)
         self.text3.SetValue(str(pos1))
         self.text4.SetValue(str(pos2))
@@ -186,12 +201,29 @@ class MyApp(wx.App):
             self.pos2 = int(text)
         except:
             self.text6.SetValue('0')
+def angle_control():
+    while True:
+        start = datetime.now()
+        motor1.angle_go()
+        motor2.angle_go()
+        end = datetime.now()
+        exec_time = end - start
+        print(exec_time,exec_time.total_seconds())
+        if 0.2-exec_time.total_seconds() > 0:
+            time.sleep(0.2-exec_time.total_seconds())
 
+
+    pass
 def main():
+    p_control = threading.Thread(target=angle_control)
+    p_control.start()
     app = MyApp()
     app.MainLoop()
 
-
     
 #if __name__ =='__main__':
+
+motor1 = motor(node =5, angle =18700, min =12627, max =22530)#12627 ~ 22530
+motor2 = motor(node =3, angle =28000, min =25523, max =30157)#30157 ~ 25523
+
 main()
