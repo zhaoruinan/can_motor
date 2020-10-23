@@ -227,6 +227,8 @@ def search():
 def main():
     p_control = threading.Thread(target=angle_control)
     p_control.start()
+    p_search = threading.Thread(target=search)
+    p_search.start()
     app = MyApp()
     app.MainLoop()
 

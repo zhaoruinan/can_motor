@@ -19,8 +19,8 @@ def neck_bullt_sim():
         sim.motor_set_speed(5,sim_v2)
         sim.step()
     sim.stop()
-HOST = '127.0.0.1'  # The server's hostname or IP address
-PORT = 9911        # The port used by the server
+HOST = '192.168.0.117'  # The server's hostname or IP address
+PORT = 32452        # The port used by the server
 SIZE_DATA_ASCII_MAX = 32
 SIZE_DATA_TCP_MAX  = 200
 class Data(Union):
@@ -65,7 +65,7 @@ def tcp_client(s):
     read_buffer = s.recv(1024)
     lock.acquire()
     memmove( res_data.byte,read_buffer, 1024)
-    print('receive data  ',res_data.double6dArr[5])
+    print('receive data  ',chr(res_data.byte[0]))
     print("client",datetime.fromtimestamp(time.time()))
     print('send data  ',send_data.double6dArr[5])
     print('speed 1 ',send_data.double6dArr[0])
