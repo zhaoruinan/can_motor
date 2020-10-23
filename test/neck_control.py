@@ -214,6 +214,16 @@ def angle_control():
 
 
     pass
+
+
+def search():
+    time.sleep(5)
+    pos_list = [[0,0],[0,4000],[7500,4000],[7500,0]]
+    for pos in pos_list:
+        motor1.angle_set(pos[0]+15000)
+        motor2.angle_set(pos[1]+26000)
+        print(pos[0],pos[1])
+        time.sleep(5)
 def main():
     p_control = threading.Thread(target=angle_control)
     p_control.start()
