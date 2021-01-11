@@ -18,11 +18,11 @@ client.connect(server_address)
 
 
 send_data = Data()
-
-for x in range(2):
+while(1):
+#for x in range(1000):
     start = datetime.now()
     #send_data.double6dArr[0]=random.uniform(0, 1)
-    send_data.int7Arr[0]=1
+    send_data.int7Arr[0]=random.randrange(1,100)
     send_data.int7Arr[1]=100
     #send_data.double6dArr[0]=3.3
     memmove( write_buffer, send_data.byte,1024)
@@ -32,7 +32,7 @@ for x in range(2):
     print(send_data.double6dArr[0])
     print(end)
     #print(exec_time,exec_time.total_seconds())
-    #time.sleep(0.2-exec_time.total_seconds())
+    time.sleep(0.2-exec_time.total_seconds())
     #read_buffer = s.recv(1024)
     res = [ord(sub) for sub in  write_buffer[:50]] 
     print(res)
